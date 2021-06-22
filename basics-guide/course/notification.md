@@ -217,7 +217,7 @@
 | appSecret | 应用的密钥 | 是 |
 | 说明 | 输入文字，对该配置进行说明或备注。长度限制为100字 | 否 |
 
-> 参考文档：<https://ding-doc.dingtalk.com/doc?spm=a2115p.8777639.0.0.66804260fOANzg#/serverapi2/eev437>
+> 参考文档：<https://developers.dingtalk.com/document/app/basic-concepts/title-kux-it4-9c7>
 
 ### 模板信息
 
@@ -231,13 +231,13 @@
 | :----: | :----- | :----: |
 | 模板名称 | 通知模板的名称，例如：钉钉消息通知。支持中文、大小写字母、数字、短划线和下划线，且必须以中文、英文或数字开头，不超过32个字符 | 是 |
 | 服务商 | 钉钉 | 是 |
-| 应用ID | 每个应用都有唯一的agentId。<br>登录`https://work.weixin.qq.com/`-在管理后台->“应用与小程序”->“应用”，点进某个应用，即可看到agentId | 是 |
-| 收信人ID | 接收者的用户userid列表，最大列表长度：100。，示例：zhangsan,lisi | 可选(收信人ID,部门ID, 全部用户,必须有一个不能为空) |
+| 应用ID | 每个应用都有唯一的agentId。<br>登录`https://open-dev.dingtalk.com/fe/app`-在管理后台->钉钉应用，点进某个应用，即可看到agentId | 是 |
+| 收信人ID | 接收者的用户userid列表，最大列表长度：100。在`https://oa.dingtalk.com/contacts.htm`中点击查看的员工UserID | 可选(收信人ID,部门ID, 全部用户,必须有一个不能为空) |
 | 收信部门ID | 接收者的部门id列表，最大列表长度：20,  接收者是部门id下(包括子部门下)的所有用户，示例：123,456 | 可选（可不传，若传不能为空） |
 | 全部用户 | 是否发送给企业全部用户 | 可选 |
 | 内容 | 消息内容，消息类型和样例参考“消息类型与数据格式”。支持表达式替换。最长不超过2048个字节 | 是 |
 
-> 参考文档：<https://ding-doc.dingtalk.com/doc#/serverapi2/pgoxpy>
+> 参考文档：<https://developers.dingtalk.com/document/app/app-faq>
 > 注：`钉钉推送消息需要到钉钉开发平台应用中心内添加IP白名单`
 
 > 表达式说明：表达式通用格式为$符号开头,两个大括号中填写需要被替换的内容。例：${test}
