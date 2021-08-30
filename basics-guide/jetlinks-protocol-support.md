@@ -5,6 +5,45 @@
 
 [查看源码](https://github.com/jetlinks/jetlinks-official-protocol)
 
+## 官方协议topic主题说明
+
+|  名词   | 解释  |
+|  ----  | ----  |
+| 上行topic  | 设备端向平台发送 |
+| 下行topic  | 平台向设备端发送 |
+
+
+## Topic列表
+### 下行Topic:
+         读取设备属性: /{productId}/{deviceId}/properties/read
+         修改设备属性: /{productId}/{deviceId}/properties/write
+         调用设备功能: /{productId}/{deviceId}/function/invoke
+
+
+### 网关设备
+          读取子设备属性: /{productId}/{deviceId}/child/{childDeviceId}/properties/read
+          修改子设备属性: /{productId}/{deviceId}/child/{childDeviceId}/properties/write
+          调用子设备功能: /{productId}/{deviceId}/child/{childDeviceId}/function/invoke
+
+### 上行Topic:
+          读取属性回复: /{productId}/{deviceId}/properties/read/reply
+          修改属性回复: /{productId}/{deviceId}/properties/write/reply
+          调用设备功能: /{productId}/{deviceId}/function/invoke/reply
+          上报设备事件: /{productId}/{deviceId}/event/{eventId}
+          上报设备属性: /{productId}/{deviceId}/properties/report
+          上报设备派生物模型: /{productId}/{deviceId}/metadata/derived
+
+
+### 网关设备
+          子设备上线消息: /{productId}/{deviceId}/child/{childDeviceId}/connected
+          子设备下线消息: /{productId}/{deviceId}/child/{childDeviceId}/disconnect
+          读取子设备属性回复: /{productId}/{deviceId}/child/{childDeviceId}/properties/read/reply
+          修改子设备属性回复: /{productId}/{deviceId}/child/{childDeviceId}/properties/write/reply
+          调用子设备功能回复: /{productId}/{deviceId}/child/{childDeviceId}/function/invoke/reply
+          上报子设备事件: /{productId}/{deviceId}/child/{childDeviceId}/event/{eventId}
+          上报子设备派生物模型: /{productId}/{deviceId}/child/{childDeviceId}/metadata/derived
+
+
 ## MQTT接入
 
 目前支持MQTT3.1.1和3.1版本协议.
@@ -19,6 +58,8 @@ username: secureId+"|"+timestamp
 password: md5(secureId+"|"+timestamp+"|"+secureKey)
 ```
 
+<a href="./mqtt-auth-generator.html" target="_blank">在线生成工具</a>
+ 
 说明: `secureId`以及`secureKey`在创建设备产品和设备实例时进行配置.
 `timestamp`为当前系统时间戳(毫秒),与系统时间不能相差5分钟.
 
@@ -261,7 +302,7 @@ topic: `/{productId}/{deviceId}/child/{childDeviceId}/disconnect`
 
 平台主动断开设备连接时，会发送此指令到网关
      
-topic: `/{productId}/{deviceId}/child/{childDeviceId}/disconnect/reply`
+topic: `/{productId}/{deviceId}/child-reply/{childDeviceId}/disconnect/reply`
       
 方向: `上行`
 
@@ -297,7 +338,7 @@ topic: `/{productId}/{deviceId}/child/{childDeviceId}/state-check`
 
 在查看子设备详情或者检查设备状态时，将会收到此消息
      
-topic: `/{productId}/{deviceId}/child/{childDeviceId}/state-check/reply`
+topic: `/{productId}/{deviceId}/child-reply/{childDeviceId}/state-check/reply`
       
 方向: `上行`
 
@@ -320,6 +361,16 @@ topic: `/{productId}/{deviceId}/child/{childDeviceId}/{topic}`
 
 ::: tip
  {topic} 以及数据格式与设备topic定义一致. 如: 获取子设备属性: `/1/d1/child/c1/properties/read`,
+:::
+
+### 子设备指令回复消息
+     
+topic: `/{productId}/{deviceId}/child-reply/{childDeviceId}/{topic}`
+      
+方向: `上行`, 根据{topic}决定.
+
+::: tip
+ {topic} 以及数据格式与设备topic定义一致. 如: 获取子设备属性回复: `/1/d1/child-reply/c1/properties/read/reply`,
 :::
 
 ### 更新标签消息
@@ -496,12 +547,31 @@ topic: `/{productId}/{deviceId}/direct`
 方向`上行`,透传设备消息,将报文传入`mqtt payload`中
 
 
-### 
+### 时间同步
  
+topic: `/{productId}/{deviceId}/time-sync`
+
+方向`上行`,用于同步服务器的时间.格式:
+```json
+{
+    "messageId":"消息ID"
+}
+```
+平台回复:
+
+ topic: `/{productId}/{deviceId}/time-sync/reply`
+
+方向`下行`,同步服务器的时间回复.格式:
+```json
+{
+    "messageId":"消息ID",
+    "timestamp":1601196762389 //UTC毫秒时间戳
+}
+```
+
+
 ## CoAP接入
 使用CoAP协议接入仅需要对数据进行加密即可.加密算法: AES/ECB/PKCS5Padding.
-
-使用自定义Option: `2100:设备ID` 来标识设备.
 
 将请求体进行加密,密钥为在创建设备产品和设备实例时进行配置的(`secureKey`).
 
@@ -513,10 +583,9 @@ topic: `/{productId}/{deviceId}/direct`
 
 发送认证请求:
 ```text
-POST /auth
+POST /{productId}/{deviceId}/request-token
 Accept: application/json
 Content-Format: application/json
-2100: 设备ID
 2110: 签名 md5(payload+secureKey)
 payload: {"timestamp":"时间戳"}
 ```
@@ -531,8 +600,7 @@ payload: {"token":"令牌"}
 
 例如:
 ```text
-POST /test/device1/event/fire_alarm
-2100: 设备ID
+POST /{productId}/{deviceId}/{topic}
 2111: 令牌
 ...其他Option
 payload: json数据

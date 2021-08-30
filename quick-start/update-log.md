@@ -1,4 +1,4 @@
-# 更新记录
+# 更新记录&开发计划
 
 最新社区版代码托管在[github](https://github.com/jetlinks/jetlinks-community)和
 [gitee](https://gitee.com/jetlinks/jetlinks-community)上.
@@ -11,12 +11,54 @@
 master为最新开发分支. 线上使用请根据情况切换到对应版本的分支.
 :::
 
-当前最新稳定版本`1.9-RELEASE`,对应代码分支`1.9`.
-## 1.10-RELEASE
+当前最新稳定版本`1.10-RELEASE`,对应代码分支`1.10`.
 
-预计更新时间: 2021-07-31
+<!-- ## 2.0-RC(计划)
+
+代码分支: `2.x`
+
+1. 升级`spring-boot 2.4`
+2. 升级`project-reactor 2020.x` 以及相关API适配
+3. 新的集群管理方案(基于SWIM),规则引擎分布式调度支持.
+4. 适配`java 11`. -->
+
+## 1.11-RELEASE
+
+预计更新时间: 2021-09-30
 
 代码分支: `master`
+
+1. 租户成员可指定授予全部租户内全部数据权限.(Pro)
+2. 增加数据权限功能，可将数据绑定到任意维度(角色,机构)中,实现数据权限控制.支持对单条数据的操作级别控制(Pro)
+3. 设备协议`CompositeProtocolSupport.onBeforeDeviceCreate`增加自定义设备信息,在创建设备时,可自定义生成设备的相关配置.
+<!-- 4. 视频模块增加其他视频接入支持(Onvif,固定rtsp,rtmp地址).(选配模块) -->
+4. 视频模块GB28181查看录像,快进,暂停,跳转播放.(选配模块)
+
+
+::: warning 更新说明
+
+此版本重构了租户功能,并增加数据权限控制相关功能.
+
+升级可能需要替换部分API包名，如: 
+
+1. 使用`org.jetlinks.pro.assets.Asset`替换`org.jetlinks.pro.tenant.TenantAsset`
+2. 使用`org.jetlinks.pro.assets.AssetType`替换`org.jetlinks.pro.tenant.AssetType`
+3. 使用`AssetsHolderCrudController`替换`TenantAccessCrudController`
+4. 使用`CorrelatesAssetsHolderCrudController`替换`TenantCorrelatesAccessCrudController`
+5. 使用`CorrelatesAssetsHolderQueryController`替换`CorrelatesAssetsHolderQueryController`
+6. 使用注解`AssetsController`替换`TenantAssets`.
+
+`AssetsHolder`:针对租户以及其他自定义的数据权限相关操作.
+
+`TenantMember`:只针对租户进行数据权限相关操作.
+
+:::
+
+## 1.10-RELEASE
+
+更新时间: 2021-08-02
+
+代码分支: `1.10`
 
 1. 增加批量下发设备指令功能,支持查看下发记录,自动重试等(Pro)
 2. 上报属性和读取属性回复增加`属性源时间`和`属性状态`;行式存储时,会使用源时间当作时间戳进行存储.
@@ -31,12 +73,15 @@ master为最新开发分支. 线上使用请根据情况切换到对应版本的
 11. 规则引擎中增加RabbitMQ,Kafka转发节点(Pro).
 12. 规则引擎节点增加权限控制支持,可通过`rule.engine.executor-filter`进行相关配置(Pro).
 13. 规则引擎`ReactorQL`节点支持租户权限控制,`rule.engine.task-executor.reactor-ql.enable-tenant=true`开启.(Pro)
-14. 子设备自动注册时,同时绑定设备资产到网关所在到租户用户下(Pro).
-15. `MQTT Broker`方式接入设备支持设置QoS.
-16. 增加`FileQueue`工具类,可将队列数据持久化到本地文件.
-17. 增加`ParallelIntervalHelper`工具类,可对并行操作进行延迟来实现并行转串行的效果.
-18. `DeviceDataManager`接口增加`getTags`方法,可在协议包中通过此方式来获取设备标签.
-19. 在TCP网络组件中的粘拆包处理方式脚本中增加`parser.newBuffer()`方法,[使用方法](https://gitee.com/jetlinks/jetlinks-community/blob/master/jetlinks-components/network-component/tcp-component/src/test/java/org/jetlinks/community/network/tcp/parser/strateies/ScriptPayloadParserBuilderTest.java#L63-73).
+14. 规则引擎设备指令节点发送指令发生异常时,将返回转为消息回复,而不是抛出异常.
+15. 规则引擎在启动时，自动启动全部规则中符合调度策略的任务，实现添加新的集群节点自动启动任务.(Pro)
+16. 子设备自动注册时,同时绑定设备资产到网关所在到租户用户下(Pro).
+17. 优化设备会话状态,如果同一个设备在不同的集群节点连接,以最后连接的为准,之前的会断开(Pro).
+18. `MQTT Broker`方式接入设备支持设置QoS.
+19. 增加`FileQueue`工具类,可将队列数据持久化到本地文件.
+20. 增加`ParallelIntervalHelper`工具类,可对并行操作进行延迟来实现并行转串行的效果.
+21. `DeviceDataManager`接口增加`getTags`方法,可在协议包中通过此方式来获取设备标签.
+22. 在TCP网络组件中的粘拆包处理方式脚本中增加`parser.newBuffer()`方法,[使用方法](https://gitee.com/jetlinks/jetlinks-community/blob/master/jetlinks-components/network-component/tcp-component/src/test/java/org/jetlinks/community/network/tcp/parser/strateies/ScriptPayloadParserBuilderTest.java#L63-73).
 
 Bug修复:
 1. 修复关闭权限验证时，可能无法使用`POST`动态查询问题
