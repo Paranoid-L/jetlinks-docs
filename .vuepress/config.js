@@ -36,6 +36,7 @@ module.exports = {
                     ['/install-deployment/start-with-source.md', '本地源码启动'],
                     ['/install-deployment/docker-start.md', '使用docker启动'],
                     // ['/install-deployment/ide-docker-start.md', '开发环境最佳实践'],
+                    ['/install-deployment/jetlinks-cloud.md', '启动jetlinks微服务版本'],
                     ['/install-deployment/deployment.md', '部署到服务器'],
                     ['/install-deployment/cluster.md', '集群部署']
                 ]
@@ -50,6 +51,7 @@ module.exports = {
                     ['/advancement-guide/jetlinks-protocol.md', '物模型说明'],
                     ['/basics-guide/protocol-support.md', '协议开发说明'],
                     ['/basics-guide/jetlinks-protocol-support.md', 'JetLinks官方协议'],
+                    ['/basics-guide/jetlinks-protocol-demo.md', 'JetLinks演示协议'],
                     ['/advancement-guide/mqtt-connection.md', '通过MQTT直连接入设备'],
                     ['/advancement-guide/third-mqtt.md', '通过MQTT Broker接入设备'],
                     ['/best-practices/tcp-connection.md', 'TCP透传方式接入设备'],

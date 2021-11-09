@@ -3,7 +3,7 @@ JetLinks 使用[hsweb-easyorm](https://github.com/hs-web/hsweb-easy-orm)实现�
 
 ## DAO
 
-`easyorm`封装了`r2dbc`实现了动态DDL,DSL动态条件等便捷操作.实现一个增删改差只需要2步.
+`easyorm`封装了`r2dbc`实现了动态DDL,DSL动态条件等便捷操作.实现一个增删改查只需要2步.
 
 创建实体类,使用jpa注解描述映射关系.
 
@@ -99,9 +99,9 @@ hsweb和jetlinks都使用`注解式`来声明web映射,方式与`spring-mvc`类�
 
 具体的接口内容请查看对应源代码.
 
-### 动态查询条件
+## 动态查询
 
-[请看这里](/interface-guide/query-param.md)
+平台的Controller和Service均支持动态查询,查询参数说明[请看这里](/interface-guide/query-param.md).
 
 ## 权限控制
 
