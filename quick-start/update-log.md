@@ -11,38 +11,164 @@
 master为最新开发分支. 线上使用请根据情况切换到对应版本的分支.
 :::
 
-当前最新稳定版本`1.11-RELEASE`,对应代码分支`1.11`.
+当前最新稳定版本`1.13`,对应代码分支`1.13`.
 
 ## 2.0-RC(计划)
 
 代码分支: `2.0`
 
+1. 在`1.20`版本基础上
+2. 全新的前端UI.
+3. 增加菜单管理,角色按菜单赋权,角色增加数据权限设置.
+4. 全新的设备接入流程.
+5. 增加端口资源管理.
+6. 增加物关系功能,支持物与物建立关系并通过关系来动态选择设备进行相关操作.(Pro)
+7. 重构系统,网络组件监控,支持集群.
+8. 重构场景联动功能.
+9. 重构消息通知,增加变量功能.
+10. 取消设备告警功能,由新的告警中心替代.
+11. 增加透传消息解析功能,协议包中标记支持透传消息,在界面上通过脚本来处理透传消息为平台的消息. [协议例子](https://github.com/jetlinks/transparent-protocol)
+12. 重构脚本引擎,使用新的脚本API:`Scripts`.增加安全性控制(默认禁止访问java类)以及循环执行控制(防止死循环)(Pro).
+13. 平台所有脚本语言支持更换为`js`.
+14. 优化集群通信性能,增加`FluxCluster`支持(集群下对`Flux`进行窗口计算等).(Pro)
+15. 增加持久化缓冲工具,数据持久化到本地.用于批量写库,失败重试等操作,减少写入速度不够时的内存占用.
+16. 增加断路器`CircuitBreaker`功能,减少由于配置错误或者数据变化导致一些动态逻辑大量错误引起系统崩溃的可能性.(Pro)
+
+::: warning 更新说明
+
+此版本与`1.x`版本不兼容.
+
+新增配置: `network.resources`,配置可用网络资源,用于在添加网络组件等常见下进行端口资源选择:
+```yml
+network:
+  resources:
+     - 0.0.0.0:8080-8082/tcp
+     - 127.0.0.1:8080-8082/udp
+```
+
+:::
+
+## 1.20-SNAPSHOT
+
+代码分支: `master`
+
 1. 升级`spring-boot 2.5`
-2. 升级`project-reactor 2020.x` 以及相关API适配
-3. 新的集群管理方案.
-4. 适配`java 11`.
-5. 插件化: 通过插件支持动态拓展设备接入,规则引擎节点等.
+2. 升级`project-reactor 2020.x`
+3. 升级`jetlinks-core 1.2`
+4. 新的集群管理方案.
+5. 重写设备会话管理策略`DeviceSessionManager`.
+6. 优化配置逻辑.
+7. 增加持久化缓冲工具,将数据持久化到本地磁盘来减少内存压力,大大提升设备数据写入可靠性.
+   
+::: warning 升级说明
+
+1. 更新后请先测试后再发布到正式环境.
+2. 原会话管理器`org.jetlinks.core.server.session.DeviceSessionManager` 已由`org.jetlinks.core.device.session.DeviceSessionManager`替代,有使用到的地方请替换之.
+3. 集群管理已经更换,配置集群时需要修改以下配置文件,特别注意: 容器启动注意配置和开放对外暴露的host和端口:`port`, `external-host`,`external-port`以及`rpc-port`,`rpc-external-host`,`rpc-external-port`
+
+```yml
+jetlinks:
+  server-id: ${spring.application.name}:${server.port} #集群节点ID,不同集群节点请设置不同的ID
+  cluster:
+    id: ${jetlinks.server-id}
+    name: ${spring.application.name}
+    port: 1${server.port} # 集群通信通信本地端口
+    external-host: 127.0.0.1  #集群节点通信对外暴露的host
+    external-port: ${jetlinks.cluster.port} #集群节点通信对外暴露的端口
+    rpc-port: 2${server.port} # 集群节点本地RPC端口
+    rpc-external-host: ${jetlinks.cluster.external-host}  #集群节点RPC对外暴露host
+    rpc-external-port: 2${server.port} #集群节点RPC对外暴露端口
+  #    seeds:  #集群种子节点,集群时,配置为集群节点的 external-host:external-port
+  #      - 127.0.0.1:18844
+```
+4. 设备在线量统计逻辑变更（含查询接口）, 实现见: `DeviceSessionMeasurementProvider`
+5. 跨域设置,spring 5.3后不支持设置`credentials`为`true`时指定`origins`通配符了.
+```yml
+hsweb:
+  cors:
+    enable: true
+    configs:
+      - path: /**
+        allowed-headers: "*"
+        allowed-methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+        allowed-origins: ["*"] #allow-credentials为true时必须指定固定的地址
+#        allow-credentials: true #只能为true或者不设置
+        max-age: 1800
+```
+
+6. 文件上传配置调整,协议包,数据导入等相关文件上传已调整使用新的`FileManager`进行管理,可根据配置文件进行配置
+```yml
+file:
+  manager:
+    storage-base-path: "./data/files"
+    read-buffer-size: 64KB
+```
+
+:::
+
+
+## 1.13
+
+发布时间: 2022-06-25
+
+代码分支: `1.13`
+
+主要优化:
+
+1. 升级`netty 4.1.73.Final`以及`vertx 4.2.3`版本,支持`mqtt5`.
+2. 修复网关子设备通过直连接入到平台时,状态可能不一致问题.
+3. 修复解绑租户成员不会触发资产解绑事件问题.(Pro)
+4. 优化设备租户信息同步逻辑(事务提交后再执行同步).(Pro)
+5. 增加在ReactorQL函数中获取设备配置信息`select device.config(deviceId,'password') pwd from ...`.
+6. 优化视频录像逻辑,优化历史录像文件信息解析性能.(Pro付费模块)
+7. 修复国标视频点播时,ssrc对应的流ID可能错误问题.(Pro付费模块)
+8. 访问日志增加只能查看自己的日志功能.(Pro)
+9. 修复标签使用object或者array类型时,可能导致无法解析问题.
+10. 完善表字段说明以及单元测试.
+11. 增加统一的文件管理功能`FileManager`,来统一管理相对敏感的文件上传以及访问.
+
+::: warning 升级说明
+
+文件上传配置调整,协议包,数据导入等相关文件上传已调整使用新的`FileManager`进行管理,可根据配置文件进行配置
+```yml
+file:
+  manager:
+    storage-base-path: "./data/files"
+    read-buffer-size: 64KB
+    cluster-key: file-manager # 修改此值并保证整个集群的值一致
+    server-node-id: ${jetlinks.server-id}
+#    cluster-rute:
+        ##  集群ID: 访问地址
+#       "[jetlinks-platform:8844]": "127.0.0.1:8844"
+#       "[jetlinks-platform:8840]": "127.0.0.1:8840"
+```
+:::
 
 ## 1.12-RELEASE
 
-预计更新时间: 2021-12-25
+更新时间: 2022-01-10
 
-代码分支: `master`
+代码分支: `1.12`
 
 主要优化:
 
 1. 增加物连接器功能,属性,功能,事件可以引用其他设备进行操作.(Pro)
-2. 视频模块增加`Onvif`,固定视频流地址支持.(Pro) 
+2. 视频模块增加固定视频流地址支持.(Pro) 
 3. 调整虚拟属性逻辑,未设置窗口的规则,直接合并到原始属性消息中.(Pro)
 4. 性能优化.
 5. 增加根据告警记录查询设备相关数据查询条件: `where id dev-alarm 'state not xxx'`.
 6. 修复批量`save`时,可能导致部分数据字段被设置为null.
-7. 修复`OpenAPI`可能导致堆外内存泄漏的问题.
+7. 修复`OpenAPI`可能导致堆外内存泄漏的问题.(Pro)
 8. `@Subscribe`注解可以使用表达式来引用配置值，如: `@Subscribe("/device/${a.b.c:default}")`
 9. 修复默认存储策略聚合查询:相同属性不同聚合方式时，聚合值可能不对的问题.
 10. 修复边缘网关配置`max-message-size`无效的问题.(Pro)
 11. 钉钉增加机器人Webhook群通知.(Pro)
-<!-- 11. 视频模块增加录像功能,支持查看,点播nvr的本地录像.支持云端录像以及播放.(Pro付费模块) -->
+12. 视频模块增加录像功能,支持查看,点播nvr的本地录像.支持云端录像以及播放.(Pro付费模块)
+13. 视频模块增加代理播放API,可使用平台接口直接播放直播和设备本地回放录像(播放地址固定).(Pro付费模块)
+14. 修复同一个设备告警配置多个触发条件时，可能某些条件无法触发问题.
+15. 升级log4j为`2.17.1`,升级logback为`1.2.9`.(平台未直接使用log4j,而是使用`log4j-to-slf4j`,最终使用logback).
+16. 修复最新设备数据存储中如果属性使用array类型,可能导致查询数据报错问题.(Pro)
+17. 设备重复注册时，自动更新配置等相关信息到数据库中.
 
 ## 1.11-RELEASE
 

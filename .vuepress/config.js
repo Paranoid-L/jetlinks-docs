@@ -10,6 +10,7 @@ module.exports = {
     // },
     themeConfig: {
         nav: [
+            {text: '2.0文档', link: 'https://doc.jetlinks.cn/'},
             {text: '关于', link: 'http://jetlinks.cn/'},
             {text: 'GitHub', link: 'https://github.com/jetlinks'},
             {text: 'gitee', link: 'https://gitee.com/jetlinks'},
@@ -38,7 +39,8 @@ module.exports = {
                     // ['/install-deployment/ide-docker-start.md', '开发环境最佳实践'],
                     ['/install-deployment/jetlinks-cloud.md', '启动jetlinks微服务版本'],
                     ['/install-deployment/deployment.md', '部署到服务器'],
-                    ['/install-deployment/cluster.md', '集群部署']
+                    ['/install-deployment/cluster.md', '集群部署'],
+                    ['/install-deployment/performance.md', '性能优化']
                 ]
             },
             {
@@ -69,6 +71,7 @@ module.exports = {
                     ['/best-practices/rule-engine-device-avg-temp.md', '通过规则引擎计算1分钟内设备平均温度(PRO)'],
                     ['/best-practices/rule-engine-device-same-group.md', '当房间开门时,打开对应房间当空调(PRO)'],
                     ['/dev-guide/device-firmware', '设备固件更新'],
+                    ['/basics-guide/tenent-application', '1.x租户场景介绍'],
                     ['/advancement-guide/benchmark.md', '压力测试']
                 ]
             },
@@ -84,6 +87,7 @@ module.exports = {
                     ['/basics-guide/course/network.md', '设备接入'],
                     ['/basics-guide/course/notification.md', '通知管理'],
                     ['/basics-guide/course/rule-engine-nodered.md', '规则引擎'],
+                    ['/basics-guide/data-forwarding.md', '平台设备数据转发'],
                     ['/basics-guide/cloud-docking.md', '云云对接'],
                     ['/basics-guide/media.md', '视频网关'],
                     ['/basics-guide/opc-ua.md', 'OPC UA'],
@@ -92,7 +96,18 @@ module.exports = {
                 ]
             },
             {
-                title: '开发手册',
+                title: '设备接入协议开发手册',
+                collapsable: false, // 可选的, 默认值是 true,
+                sidebarDepth: 2,    // 可选的, 默认值是 1
+                children:[
+                    ['/protocol/start.md', '介绍'],
+                    ['/protocol/first.md', '快速开始'],
+                    ['/protocol/mqtt.md', 'MQTT协议解析'],
+                    ['/protocol/faq.md', '常见问题']
+                ]
+            },
+            {
+                title: '平台开发手册',
                 collapsable: false, // 可选的, 默认值是 true,
                 sidebarDepth: 1,    // 可选的, 默认值是 1
                 children: [
@@ -113,7 +128,7 @@ module.exports = {
                     ['/dev-guide/mqtt-subs.md', '使用mqtt订阅平台消息'],
                     ['/dev-guide/commons-api.md', '平台内部核心接口,类说明'],
                     ['/dev-guide/assets.md', '数据权限控制'],
-                    ['/dev-guide/sso.md', '单点登录'],
+                    ['/dev-guide/sso.md', '单点登录']
                     //['/dev-guide/micro-service', '微服务']
 
                 ]
@@ -127,7 +142,7 @@ module.exports = {
                     //['', '介绍'],
                     //['', '快速开始'],
                     ['/interface-guide/open-api/access', '接入'],
-                    ['/interface-guide/open-api/open-api', 'API列表'],
+                    ['/interface-guide/open-api/open-api', 'API列表']
                 ]
             },
             {
@@ -138,8 +153,9 @@ module.exports = {
                 children: [
                     //['', '介绍'],
                     //['', '快速开始'],
-                    ['/big-screen/start/start', '启动'],
-                    ['big-screen/baiscs/open', '快速入门'],
+                    ['/big-screen/start/new-visilization', '新版大屏启动'],
+                    ['/big-screen/start/start', '旧版大屏启动']
+                    // ['big-screen/baiscs/open', '快速入门'],
                 ]
             },
             {

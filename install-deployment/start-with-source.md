@@ -17,10 +17,14 @@
 
 ## 下载源代码
 
-建议使用`git clone`下载源代码,注意代码分支,`master`为最新的开发分支.其他分支为对应的版本.
+1. 进入[Gitee](https://gitee.com/jetlinks/jetlinks-community)
+2. Star仓库
+![star.png](./images/star.png)
+3. 下载源代码,建议使用`git clone`下载源代码,注意代码分支,`master`为最新的开发分支.其他分支为对应的版本.
+![star.png](./images/download.png)
 
 ```bash
-$ git clone https://github.com/jetlinks/jetlinks-community.git
+$ git clone https://gitee.com/jetlinks/jetlinks-community.git
 $ cd jetlinks-community
 ```
 
@@ -41,7 +45,7 @@ spring:
     username: postgres  # 数据库用户名
     password: jetlinks  # 数据库密码
 easyorm:
-  default-schema: public # 数据库名 修改了数据库请修改这里
+  default-schema: public # 数据库名 修改了数据库请修改这里,mysql为数据库名
   dialect: postgres # 数据库方言，支持 postgres,mysql,h2
 elasticsearch:
   embedded:
@@ -64,6 +68,8 @@ hsweb:
 ```bash
 java -jar ./jetlinks-standalone/target/jetlinks-standalone.jar --spring.elasticsearch.embedded.enabled=true
 ```
+
+修改了数据库配置也要同时修改`easyorm.dialect`以及`easyorm.default-schema`配置.
 :::
 
 ## 使用命令行启动
@@ -117,7 +123,7 @@ JetLinks 是前后端分离的.启动完后端服务后,还需要启动前端.
 如果本地不需要修改前端代码,并且本地有docker环境,建议使用docker启动前端.
 
 ```bash
-docker run -it --rm -p 9000:80 -e "API_BASE_PATH=http://host.docker.internal:8848/" registry.cn-shenzhen.aliyuncs.com/jetlinks/jetlinks-ui-antd:1.10.0
+docker run -it --rm -p 9000:80 -e "API_BASE_PATH=http://host.docker.internal:8848/" registry.cn-shenzhen.aliyuncs.com/jetlinks/jetlinks-ui-antd:1.13.0
 ```
 http://host.docker.internal:8848/ 为后台服务的地址,请根据情况修改.
 :::
